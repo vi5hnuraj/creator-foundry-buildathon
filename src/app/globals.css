@@ -1,0 +1,102 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+@layer base {
+  a {
+    @apply transition-colors;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@layer components {
+  .card {
+    @apply rounded-xl border p-5 transition-all;
+    background: var(--surface-raised);
+    border-color: var(--border-subtle);
+    box-shadow: var(--glow-card);
+  }
+  .card-hover {
+    @apply card cursor-pointer;
+  }
+  .card-hover:hover {
+    box-shadow: var(--glow-accent);
+    transform: translateY(-2px);
+  }
+
+  .input {
+    @apply w-full rounded-lg border px-3 py-2 text-sm
+      text-t1 placeholder:text-t4 outline-none transition-all
+      focus:border-[var(--border-strong)] focus:shadow-[var(--ring-focus)];
+    border-color: var(--border);
+    background: var(--surface-inset);
+  }
+
+  .label {
+    @apply mb-1.5 block text-sm font-medium text-t3;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-4 py-2
+      text-sm font-medium transition-all disabled:cursor-not-allowed
+      disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply btn transition-all;
+    background: var(--accent);
+    color: var(--on-accent);
+  }
+  .btn-primary:hover {
+    background: var(--accent-hover);
+    box-shadow: var(--glow-accent);
+  }
+  .btn-primary:active {
+    background: var(--accent-press);
+  }
+  .btn-ghost {
+    @apply btn text-t1;
+    background: transparent;
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover {
+    background: var(--surface-hover);
+    border-color: var(--border-strong);
+  }
+
+  /* Bold editorial CTA — hard offset shadow (neo-brutalist sticker) */
+  .btn-sticker {
+    @apply btn-primary font-bold;
+    border-radius: var(--radius-md);
+    box-shadow: 4px 4px 0 0 var(--amber);
+  }
+  .btn-sticker:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 6px 6px 0 0 var(--amber);
+  }
+  .btn-sticker:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 0 var(--amber);
+  }
+  .btn-sticker:disabled {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .pill {
+    @apply inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium;
+    border-color: var(--border-subtle);
+    background: var(--surface-inset);
+    color: var(--text-3);
+  }
+}

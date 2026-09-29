@@ -1,0 +1,69 @@
+/* ============================================================
+   Creator Foundry — Typography tokens
+   Newsreader (display serif) · Hanken Grotesk (UI/body) · JetBrains Mono (data)
+   ============================================================ */
+
+:root {
+  /* ---- Families ---- */
+  --font-display: 'Newsreader', 'Iowan Old Style', Georgia, serif;
+  --font-sans: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* ---- Type scale (px in rem, 16px base) ---- */
+  --text-2xs: 0.6875rem;  /* 11 — micro labels        */
+  --text-xs:  0.75rem;    /* 12 — captions / mono data */
+  --text-sm:  0.875rem;   /* 14 — secondary UI         */
+  --text-base:1rem;       /* 16 — body                 */
+  --text-md:  1.125rem;   /* 18 — lead body            */
+  --text-lg:  1.375rem;   /* 22                        */
+  --text-xl:  1.75rem;    /* 28                        */
+  --text-2xl: 2.25rem;    /* 36                        */
+  --text-3xl: 3rem;       /* 48                        */
+  --text-4xl: 4rem;       /* 64                        */
+  --text-5xl: 5.5rem;     /* 88 — hero display         */
+  --text-6xl: 7rem;       /* 112 — poster display      */
+
+  /* ---- Weights ---- */
+  --weight-light: 300;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --weight-extrabold: 800;
+
+  /* ---- Line heights ---- */
+  --leading-none: 1;
+  --leading-tight: 1.1;
+  --leading-snug: 1.25;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.65;
+
+  /* ---- Letter spacing ---- */
+  --tracking-tighter: -0.03em;  /* large display serif */
+  --tracking-tight: -0.015em;   /* headings            */
+  --tracking-normal: 0;
+  --tracking-wide: 0.02em;
+  --tracking-wider: 0.08em;     /* eyebrows / mono labels */
+  --tracking-widest: 0.16em;    /* all-caps micro labels  */
+
+  /* ---- Semantic roles ---- */
+  --display-font: var(--font-display);
+  --display-weight: var(--weight-regular);
+  --display-tracking: var(--tracking-tighter);
+
+  --heading-font: var(--font-display);
+  --heading-weight: var(--weight-medium);
+  --heading-tracking: var(--tracking-tight);
+
+  --body-font: var(--font-sans);
+  --body-weight: var(--weight-regular);
+
+  --label-font: var(--font-sans);
+  --label-weight: var(--weight-semibold);
+
+  --eyebrow-font: var(--font-mono);
+  --eyebrow-weight: var(--weight-medium);
+  --eyebrow-tracking: var(--tracking-widest);
+
+  --data-font: var(--font-mono);
+}

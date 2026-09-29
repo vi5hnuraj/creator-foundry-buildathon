@@ -1,0 +1,130 @@
+:root {
+  /* ---- Dark editorial palette (Arbora-style: warm near-black / cream) ---- */
+  --paper-950: #0B0A08;
+  --paper-900: #121110;
+  --paper-800: #171613;
+  --paper-700: #201E1A;
+  --paper-600: #2C2924;
+  --paper-500: #6A655B;
+  --paper-400: #8F897C;
+  --paper-300: #B3AC9E;
+  --paper-200: #D6D0C4;
+  --paper-100: #E9E4D8;
+  --paper-050: #F2EDE2;
+  --paper-canvas: #0B0A08;
+
+  /* Legacy ink vars → dark warm ramp */
+  --ink-950: var(--paper-950);
+  --ink-900: var(--paper-900);
+  --ink-850: var(--paper-900);
+  --ink-800: var(--paper-800);
+  --ink-750: var(--paper-800);
+  --ink-700: var(--paper-700);
+  --ink-650: var(--paper-700);
+  --ink-600: var(--paper-600);
+  --ink-500: var(--paper-500);
+  --ink-400: var(--paper-400);
+  --ink-300: var(--paper-300);
+  --ink-200: var(--paper-200);
+  --ink-100: var(--paper-100);
+  --ink-050: var(--paper-050);
+
+  /* ---- Accents (muted editorial) ---- */
+  --amber:      #D9A441;
+  --amber-100:  rgba(217,164,65,0.10);
+  --salmon:     #E08A72;
+  --salmon-100: rgba(224,138,114,0.10);
+  --green:      #7FB89A;
+  --green-100:  rgba(127,184,154,0.10);
+  --violet:     #A79BF5;
+  --violet-100: rgba(167,155,245,0.10);
+  --magenta:    #D98DB8;
+  --cyan:       #7FB5C4;
+
+  /* Primary action = cream pill with dark text */
+  --accent:         var(--paper-050);
+  --accent-hover:   #FFFFFF;
+  --accent-press:   var(--paper-200);
+  --accent-subtle:  rgba(242,237,226,0.08);
+  --accent-border:  rgba(242,237,226,0.25);
+  --on-accent:      #0B0A08;
+
+  --gradient-accent: linear-gradient(135deg, #F2EDE2, #D6D0C4);
+  --gradient-accent-soft: linear-gradient(135deg, rgba(242,237,226,0.10), rgba(214,208,196,0.06));
+  --gradient-subtle: radial-gradient(900px 600px at 15% 0%, rgba(242,237,226,0.035), transparent 60%),
+                     radial-gradient(700px 500px at 85% 100%, rgba(217,164,65,0.04), transparent 60%);
+
+  --verified:        var(--green);
+  --verified-subtle: var(--green-100);
+  --on-verified:     #0B0A08;
+
+  --success:        var(--green);
+  --success-subtle: var(--green-100);
+  --warning:        var(--amber);
+  --warning-subtle: var(--amber-100);
+  --danger:         var(--salmon);
+  --danger-subtle:  var(--salmon-100);
+  --info:           var(--violet);
+  --info-subtle:    var(--violet-100);
+
+  /* ---- Surfaces ---- */
+  --surface-canvas:  var(--paper-canvas);
+  --surface:         var(--paper-900);
+  --surface-raised:  var(--paper-800);
+  --surface-card:    var(--paper-800);
+  --surface-overlay: var(--paper-700);
+  --surface-inset:   var(--paper-900);
+  --surface-hover:   rgba(242,237,226,0.05);
+  --surface-active:  rgba(242,237,226,0.09);
+
+  /* ---- Text: cream on near-black ---- */
+  --text-1: var(--paper-050);
+  --text-2: var(--paper-200);
+  --text-3: var(--paper-400);
+  --text-4: var(--paper-500);
+
+  --border-subtle: rgba(242,237,226,0.08);
+  --border:        rgba(242,237,226,0.14);
+  --border-strong: rgba(242,237,226,0.28);
+  --border-accent: var(--accent-border);
+
+  /* ---- RGB triples -------------------------------------------------------
+     Tailwind v3 can only apply opacity modifiers (bg-accent/10,
+     border-info/25, text-t4/60 …) when a color resolves through
+     `rgb(var(--x-rgb) / <alpha-value>)`. Plain hex/rgba vars make those
+     utilities silently compile to nothing, so every slashed class in the
+     app was dead CSS. Keep these triples in sync with the hexes above. */
+  --paper-050-rgb: 242 237 226;
+  --paper-200-rgb: 214 208 196;
+  --paper-400-rgb: 143 137 124;
+  --paper-500-rgb: 106 101 91;
+  --paper-800-rgb: 23 22 19;
+  --paper-900-rgb: 18 17 16;
+
+  --amber-rgb:   217 164 65;
+  --salmon-rgb:  224 138 114;
+  --green-rgb:   127 184 154;
+  --violet-rgb:  167 155 245;
+  --magenta-rgb: 217 141 184;
+  --cyan-rgb:    127 181 196;
+
+  --accent-rgb:         var(--paper-050-rgb);
+  --verified-rgb:       var(--green-rgb);
+  --success-rgb:        var(--green-rgb);
+  --warning-rgb:        var(--amber-rgb);
+  --danger-rgb:         var(--salmon-rgb);
+  --info-rgb:           var(--violet-rgb);
+  /* NOTE: the *-subtle tokens intentionally stay plain hex/rgba vars in the
+     Tailwind config — they already bake in their own alpha (0.08–0.10), and
+     routing them through <alpha-value> would render them fully opaque. */
+
+  --text-1-rgb: var(--paper-050-rgb);
+  --text-2-rgb: var(--paper-200-rgb);
+  --text-3-rgb: var(--paper-400-rgb);
+  --text-4-rgb: var(--paper-500-rgb);
+
+  --surface-rgb:         var(--paper-900-rgb);
+  --surface-raised-rgb:  var(--paper-800-rgb);
+  --surface-inset-rgb:   var(--paper-900-rgb);
+  --card-rgb:            var(--paper-800-rgb);
+}

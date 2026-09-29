@@ -1,0 +1,35 @@
+/* ============================================================
+   Creator Foundry — Motion
+   Calm, confident, optical. Things ease out and settle; emphasis
+   moments get a gentle spring. No bounce on functional UI.
+   ============================================================ */
+
+:root {
+  /* ---- Durations ---- */
+  --dur-instant: 80ms;  /* @kind other */
+  --dur-fast: 130ms;    /* @kind other */
+  --dur: 200ms;         /* @kind other */
+  --dur-slow: 340ms;    /* @kind other */
+  --dur-slower: 560ms;  /* @kind other */
+
+  /* ---- Easings ---- */
+  --ease-out: cubic-bezier(.22,.7,.24,1);      /* @kind other */
+  --ease-in-out: cubic-bezier(.6,0,.24,1);     /* @kind other */
+  --ease-spring: cubic-bezier(.34,1.32,.5,1);  /* @kind other */
+  --ease-linear: linear;                       /* @kind other */
+
+  /* ---- Common transitions ---- */
+  --transition-colors: color var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);  /* @kind other */
+  --transition-transform: transform var(--dur) var(--ease-out);  /* @kind other */
+  --transition-all: all var(--dur) var(--ease-out);  /* @kind other */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-instant: 0ms;  /* @kind other */
+    --dur-fast: 0ms;     /* @kind other */
+    --dur: 0ms;          /* @kind other */
+    --dur-slow: 0ms;     /* @kind other */
+    --dur-slower: 0ms;   /* @kind other */
+  }
+}

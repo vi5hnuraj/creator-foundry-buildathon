@@ -1,0 +1,83 @@
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--surface-canvas);
+  color: var(--text-2);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  font-weight: var(--weight-regular);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection { background: var(--amber); color: #0B0A08; }
+
+a { color: inherit; text-decoration: none; }
+
+h1, h2, h3, h4 {
+  font-family: var(--heading-font);
+  font-weight: var(--heading-weight);
+  letter-spacing: var(--heading-tracking);
+  line-height: var(--leading-tight);
+  color: var(--text-1);
+  margin: 0;
+  text-wrap: balance;
+}
+
+p { text-wrap: pretty; }
+
+:focus-visible { outline: none; box-shadow: var(--ring-focus); border-radius: var(--radius-sm); }
+
+.rf-eyebrow {
+  font-family: var(--eyebrow-font);
+  font-weight: var(--eyebrow-weight);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.rf-display {
+  font-family: var(--display-font);
+  font-weight: var(--display-weight);
+  letter-spacing: var(--display-tracking);
+  line-height: var(--leading-none);
+  color: var(--text-1);
+  /* large optical size = high-contrast editorial strokes at display sizes */
+  font-variation-settings: "opsz" 72;
+}
+
+.rf-gradient-text {
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Editorial underline rule under eyebrow labels */
+.rf-rule-accent {
+  height: 2px;
+  border: 0;
+  width: 56px;
+  background: var(--amber);
+}
+
+.rf-data {
+  font-family: var(--data-font);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+.rf-aurora {
+  background: var(--surface-canvas);
+  background-image: var(--gradient-subtle);
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.rf-rule { height: 1px; border: 0; background: var(--border); }

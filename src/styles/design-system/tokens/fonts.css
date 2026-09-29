@@ -1,0 +1,11 @@
+/* ============================================================
+   Creator Foundry — Webfonts
+   Loaded from Google Fonts CDN.
+   - Newsreader  : expressive editorial serif (display + headings)
+   - Hanken Grotesk : clean, warm grotesk (UI + body)
+   - JetBrains Mono : technical mono (on-chain data, hashes, amounts)
+   NOTE: these are loaded from the Google Fonts CDN rather than
+   self-hosted binaries. See readme.md > Typography for self-hosting.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=Hanken+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
