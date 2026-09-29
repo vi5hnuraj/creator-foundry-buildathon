@@ -1,0 +1,54 @@
+# ============================================================
+# Creator Foundry — gitignore
+# Generated files, runtime data and secrets are never committed.
+# The committed source is: src/ contracts/ services/ scripts/
+# docs/ public/ + root configs + README + .env.example
+# ============================================================
+
+# dependencies
+node_modules/
+
+# next.js build output (per-port dev dirs: .next-dev-3000, .next-dev-3100, …)
+.next/
+.next-dev*/
+/out/
+/build
+
+# typescript incremental cache
+*.tsbuildinfo
+next-env.d.ts
+
+# env files — SECRETS, never commit
+.env
+.env*.local
+.env.local.bak
+
+# runtime data (fallback database, backups, uploaded assets)
+data/local/
+data/uploads/
+uploads/
+
+# python critic service
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# logs & debug
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# test / build coverage (if ever generated)
+coverage/
+dist/
+
+# os / editor noise
+.DS_Store
+Thumbs.db
+*.pem
+
+# local tooling state
+.freebuff/

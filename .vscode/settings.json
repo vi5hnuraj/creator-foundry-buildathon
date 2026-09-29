@@ -1,0 +1,23 @@
+{
+  // Presentation-ready Explorer: hide generated/runtime clutter
+  // (these are build artifacts, caches and secrets — never source).
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/.next*": true,
+    "**/.freebuff": true,
+    "**/*.tsbuildinfo": true,
+    "**/next-env.d.ts": true,
+    ".env": true,
+    ".env.local": true
+  },
+  // Keep full-text search off the generated trees too.
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/.next*": true,
+    "**/.freebuff": true,
+    "data/local": true,
+    "data/uploads": true
+  },
+  // Dense code reads poorly on a projected demo screen.
+  "editor.minimap.enabled": false
+}

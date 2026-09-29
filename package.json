@@ -1,0 +1,43 @@
+{
+  "name": "creator-foundry",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Creator Foundry — AI-planned creative production with escrowed bounty rewards, proof-of-authorship NFTs and USDG royalty splits on Arbitrum.",
+  "scripts": {
+    "dev": "node scripts/dev-port.mjs",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "critic": "services/critic/.venv/bin/python services/critic/serve.py",
+    "critic:setup": "python3 -m venv services/critic/.venv && . services/critic/.venv/bin/activate && pip install -r services/critic/requirements.txt",
+    "deploy": "node scripts/deploy.mjs",
+    "verify": "node scripts/verify-onchain.mjs",
+    "seed": "node scripts/seed-demo.mjs",
+    "demo:escrow": "node scripts/demo-loop.mjs",
+    "demo:seal": "node scripts/seal-and-sell.mjs",
+    "check:usdg": "node scripts/check-usdg.mjs"
+  },
+  "dependencies": {
+    "@rainbow-me/rainbowkit": "^2.2.11",
+    "@supabase/supabase-js": "^2.45.0",
+    "@tanstack/react-query": "^5.101.0",
+    "lucide-react": "^1.27.0",
+    "next": "14.2.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "viem": "^2.52.2",
+    "wagmi": "^2.19.5"
+  },
+  "devDependencies": {
+    "@openzeppelin/contracts": "^5.6.1",
+    "@types/node": "^20.14.0",
+    "@types/react": "^18.3.0",
+    "autoprefixer": "^10.5.0",
+    "cross-env": "^10.1.0",
+    "dotenv": "^18.0.4",
+    "postcss": "^8.5.15",
+    "solc": "^0.8.26",
+    "tailwindcss": "^3.4.19",
+    "typescript": "^5.5.0"
+  }
+}
