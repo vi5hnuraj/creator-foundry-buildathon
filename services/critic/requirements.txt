@@ -1,0 +1,11 @@
+# Creator Foundry — Python Critic Model
+# Install:  python3 -m venv .venv && source .venv/bin/activate
+#           pip install -r requirements.txt
+torch>=2.2
+open_clip_torch>=2.24
+pillow>=10.0
+numpy>=1.26
+fastapi>=0.110
+uvicorn>=0.29
+python-multipart>=0.0.9
+requests>=2.31
