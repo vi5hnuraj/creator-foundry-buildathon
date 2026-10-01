@@ -108,7 +108,7 @@ contributor never depends on the producer to run it.
 
 ## Tech stack
 
-- **Solidity** — three contracts: proof-of-authorship ERC-721 + ERC-2981, a 0xSplits-style USDG
+- **Solidity** — three contracts: proof-of-authorship ERC-721 + ERC-2981, a pull-based USDG
   revenue distributor with permissionless `release()`, and the two-sided bounty escrow.
 - **Paxos USDG** — the settlement currency end to end: bounty payouts, escrow, and copy sales.
 - **Python + PyTorch** — the trained critic service (FastAPI): frozen CLIP backbone plus a

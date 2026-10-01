@@ -1,7 +1,7 @@
 # Creator Foundry — Resources
 
-Everything external this project depends on or has been verified against, plus the reading that
-informed the design. Addresses and links were verified **September 2026**.
+Everything external this project depends on or has been verified against. Addresses and links
+were verified **September 2026**.
 
 ---
 
@@ -70,22 +70,7 @@ producers.
 - ERC-20 — https://eips.ethereum.org/EIPS/eip-20
 - OpenZeppelin Contracts (ERC721URIStorage, ERC2981, Ownable, ReentrancyGuard) — https://docs.openzeppelin.com/contracts/5.x
 
-## 6. Prior art we studied
-
-- **0xSplits** — https://docs.splits.org — the reference model for immutable, permissionless revenue
-  distribution. `CreatorFoundrySplits` follows the same principle (fixed payout table, anyone can
-  trigger a release) while denominating payouts in an ERC-20 and capping the platform fee on-chain.
-- **Sablier / Superfluid** — https://docs.sablier.com · https://docs.superfluid.finance — continuous
-  payment streams, a different answer to the same "creator isn't paid" problem.
-- **Kleros / Aragon Court** — https://kleros.io — decentralized arbitration; our alternative is to
-  avoid needing a judge at all by making each side's deadline automatically decisive.
-- **Gitcoin / Optimism RetroPGF** — retrospective funding of public goods, the opposite temporal
-  model to the one this project uses (fund first, work second).
-
-The design deliberately takes 0xSplits' immutable-distribution idea and pairs it with an escrow that
-has **two** deadlines, because a single-timer escrow lets either side profit from silence.
-
-## 7. Toolchain documentation
+## 6. Toolchain documentation
 
 | Tool | Docs | Used for |
 |---|---|---|
@@ -104,14 +89,14 @@ has **two** deadlines, because a single-timer escrow lets either side profit fro
 | CLIP (OpenAI) | https://github.com/openai/CLIP | frozen backbone for the critic |
 | Pillow | https://pillow.readthedocs.io | image handling in the critic |
 
-## 8. Hackathon
+## 7. Hackathon
 
 - Arbitrum Open House Singapore — **Online Buildathon**, HackQuest
 - Submission deadline: **1 October 2026, 11:59 PM SGT**
 - Two videos are required by the project setup form: a **Demo Video** and a **Pitch Video**
   (see [SUBMISSION.md](SUBMISSION.md))
 
-## 9. Repo documentation index
+## 8. Repo documentation index
 
 | Doc | Read it for |
 |---|---|

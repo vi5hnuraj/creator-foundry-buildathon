@@ -1,8 +1,8 @@
-# DEPLOYMENT CHEAT SHEET — Robinhood Chain Testnet (primary) + Arbitrum Sepolia
+# DEPLOYMENT — Robinhood Chain Testnet (primary) + Arbitrum Sepolia
 
-## ✅ DEPLOYED — BOTH CHAINS (dual-chain submission)
+## Deployed — both chains
 
-### Robinhood Chain Testnet (46630) — PRIMARY DEMO CHAIN
+### Robinhood Chain Testnet (46630) — primary demo chain
 | Contract | Address |
 |---|---|
 | **CreatorFoundryAssetNFT** (ERC-721 + ERC-2981) | `0xb176b9ea780c534c47c15a9651f7af1b80302b10` |
@@ -11,9 +11,9 @@
 | **Paxos USDG (real)** | `0x7E955252E15c84f5768B83c41a71F9eba181802F` |
 
 Explorer: https://explorer.testnet.chain.robinhood.com/address/0xb176b9ea780c534c47c15a9651f7af1b80302b10
-Wallet funding: **200 USDG + 0.01 ETH** ✅ ready for the full demo
+Wallet funding: the producer wallet holds ~194 USDG — enough for the full demo loop.
 
-### Arbitrum Sepolia (421614) — SECONDARY DEPLOYMENT
+### Arbitrum Sepolia (421614) — secondary deployment
 | Contract | Address |
 |---|---|
 | **CreatorFoundryAssetNFT** | `0xd63401c8b86c5baa85e4af0e141c4bb55cf4f5ca` |
@@ -47,7 +47,7 @@ disturbing a working demo.
 > shared across chains and explorer links are built from the active chain, so flipping to Arbitrum
 > would rewrite the recorded Robinhood transaction links into arbiscan 404s.
 
-### ✅ One complete bounty loop, executed for real (every tx verifiable)
+### One complete bounty loop, executed for real (every tx verifiable)
 
 Bounty `Concept Art – Inspector Vale Character Design` (1.8 USDG), Neon Requiem project.
 Each line is a real transaction on Robinhood Chain Testnet:
@@ -63,7 +63,7 @@ Each line is a real transaction on Robinhood Chain Testnet:
 Read back from the chain afterwards: `escrows(key).released = true`, `criticScore = 80`,
 contributor USDG balance went **0 → 1.8**, `ownerOf(1)` = the contributor wallet.
 
-### ✅ The royalty half, also executed for real
+### The royalty half, also executed for real
 
 Work `Neon Requiem` — sealed, committed, sold and paid out:
 
@@ -109,16 +109,17 @@ have scored the artifact first.
 > so `autoRelease` is not armed for that bounty. For a bounty where the contributor attests,
 > the review-window backstop becomes live and anyone can trigger the payout.
 
-## ⚡ FAST PATH — one command (re-deploy anytime)
+## Fast path — one command (re-deploy any time)
 
-The repo ships a deploy script that compiles, deploys the contracts, checks your real USDG balance, and writes `.env.local` for you.
+The repo ships a deploy script that compiles, deploys the contracts, checks your real USDG balance,
+and writes the addresses for you.
 
 ```bash
 # 1. Create a BURNER MetaMask account (testnet only — never your main wallet)
 # 2. Add Arbitrum Sepolia to it (settings below) and get test ETH from a faucet
 # 3. Export its private key (MetaMask → account → Account details → Export)
-# 4. Put it in .env.local:
-echo 'DEPLOYER_PRIVATE_KEY=0xYourBurnerKeyHere' > .env.local
+# 4. Put it in .env.local — APPEND, do not overwrite an existing file:
+echo 'DEPLOYER_PRIVATE_KEY=0xYourBurnerKeyHere' >> .env.local
 # 5. Deploy:
 npm run deploy
 ```
@@ -147,13 +148,13 @@ direct producer → contributor transfer, and the escrow UI is hidden. So if the
 
 ---
 
-## MANUAL PATH (Remix) — original 15-minute walkthrough
+## Manual path (Remix) — a 15-minute walkthrough
 
 Follow this top to bottom. It gives you every address the app needs.
 
 ---
 
-## STEP 0 — Which wallet?
+## Step 0 — Which wallet?
 
 - Use **MetaMask** (or any injected wallet).
 - You need **2 accounts** in it for the demo:
@@ -164,7 +165,7 @@ Follow this top to bottom. It gives you every address the app needs.
 
 ---
 
-## STEP 1 — Add the network to MetaMask
+## Step 1 — Add the network to MetaMask
 
 Settings → Networks → Add manually:
 
@@ -176,7 +177,7 @@ Settings → Networks → Add manually:
 | Currency | `ETH` |
 | Explorer | `https://sepolia.arbiscan.io` |
 
-## STEP 2 — Get gas (test ETH)
+## Step 2 — Get gas (test ETH)
 
 Faucets (pick one):
 - https://arbitrum.faucet.dev/
@@ -186,14 +187,14 @@ Faucets (pick one):
 
 You need ~0.01–0.05 ETH for deployment + demo transactions.
 
-## STEP 3 — Deploy the 3 contracts (Remix, 5 minutes)
+## Step 3 — Deploy the 3 contracts (Remix, 5 minutes)
 
 1. Open https://remix.ethereum.org
 2. Create 3 files in the `contracts/` folder of the workspace and paste each file from this repo's `contracts/src/` directory:
    - `CreatorFoundryAssetNFT.sol`
    - `CreatorFoundrySplits.sol`
    - `CreatorFoundryBountyEscrow.sol`
-3. Solidity compiler: **0.8.26+**, enable optimization (200 runs).
+3. Solidity compiler: **exactly 0.8.26** (bytecode must match the shipped deployments), enable optimization (200 runs).
 4. Deploy tab → Environment: **"Injected Provider — MetaMask"** (make sure MetaMask is on Arbitrum Sepolia).
 
 Deploy in this order and **copy each address immediately**:
@@ -224,7 +225,7 @@ Then fund the escrow from the app: open a bounty on the project board and click
 **🔒 Lock reward**. The producer signs an ERC-20 `approve` (once) and then `fund`,
 which moves the reward into the contract and locks the brief hash with it.
 
-## STEP 4 — Get REAL Paxos USDG (no mocks)
+## Step 4 — Get real Paxos USDG (no mocks)
 
 Real USDG testnet contract addresses (from docs.paxos.com):
 - **Arbitrum Sepolia:** `0xFFC95faa3d63Cde504a05B567C600B78C0b41892`
@@ -233,14 +234,14 @@ Real USDG testnet contract addresses (from docs.paxos.com):
 
 To obtain test USDG (per https://docs.paxos.com/guides/developer/sandbox):
 1. Create a free Paxos Developer (Sandbox) account
-2. Sandbox Dashboard → **Deposit** → asset **USDG**, network **Arbitrum One (Sepolia)** → copy the deposit address
+2. Sandbox Dashboard → **Deposit** → asset **USDG**, network **Arbitrum Sepolia** → copy the deposit address
 3. Fund it via the **Paxos Testnet Faucet** or the Dashboard **Fund** button (USDG limit: 1,000,000 per withdrawal)
 4. **Withdraw on-chain** from the Sandbox to your producer wallet
 5. Optionally `Import Token` in MetaMask with the USDG testnet address so the balance is visible
 
 Repeat the withdrawal for your CONTRIBUTOR account if you want it to hold USDG too.
 
-## STEP 5 — Write `.env.local`
+## Step 5 — Write `.env.local`
 
 ```env
 NEXT_PUBLIC_CHAIN=arbitrum-sepolia
@@ -254,7 +255,7 @@ Restart `npm run dev` after creating the file.
 
 ---
 
-## STEP 6b — Demo the escrow SLA (the strongest 90 seconds in the demo)
+## Step 6 — Demo the escrow SLA (the strongest 90 seconds in the demo)
 
 This is the part that proves the money is not a promise. Two browser windows:
 producer (Account 1) and contributor (Account 2).
@@ -283,7 +284,7 @@ before the delivery window expires, **Refund** returns the reward to the produce
 
 ---
 
-## STEP 6 — Robinhood Chain Testnet (secondary — do after the Arbitrum demo works)
+## Step 7 — Robinhood Chain Testnet (optional secondary — do after the Arbitrum demo works)
 
 | Field | Value |
 |---|---|
@@ -296,7 +297,7 @@ before the delivery window expires, **Refund** returns the reward to the produce
 - Faucet: https://faucet.testnet.chain.robinhood.com/
 - Deploy the same 3 contracts the same way (Injected Provider on Robinhood testnet).
 - USDG on Robinhood testnet (real Paxos): `0x7E955252E15c84f5768B83c41a71F9eba181802F`
-  — obtain it via the Paxos Sandbox flow in STEP 4.
+  — obtain it via the Paxos Sandbox flow in Step 4.
 - Switch app: set `NEXT_PUBLIC_CHAIN=robinhood-testnet` and restart.
 
 ---

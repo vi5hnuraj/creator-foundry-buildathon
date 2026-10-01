@@ -172,7 +172,7 @@ Three contracts in `contracts/src/`, no proxies, no upgrade path — deliberatel
 ### `CreatorFoundrySplits`
 `Ownable + ReentrancyGuard`. One instance per sealed work.
 - `commitSplit(...)` — one-shot (`AlreadyCommitted`), rejects duplicate payees, requires weights to
-  sum within the total, and caps the fee at `MAX_FEE_BPS = 1_500` (default `DEFAULT_FEE_BPS = 300`).
+  sum to exactly 10,000, and caps the fee at `MAX_FEE_BPS = 1_500` (default `DEFAULT_FEE_BPS = 300`).
 - `release()` — **permissionless**; splits the contract's balance pro-rata by weight.
 - `withdraw()` / `withdrawTo(address)` — pull a single payee's own balance.
 - `pendingBalance(address)` — what a payee can withdraw right now.
@@ -180,7 +180,7 @@ Three contracts in `contracts/src/`, no proxies, no upgrade path — deliberatel
 
 Because `commitSplit` is one-shot, **each sealed work needs its own Splits deployment**. The demo
 instance is permanently bound to the first sealed work — this is a real constraint, not an
-oversight (see [DEVELOPMENT.md](DEVELOPMENT.md#the-one-shot-splits-constraint)).
+oversight (see [DEVELOPMENT.md](DEVELOPMENT.md#7-the-one-shot-splits-constraint)).
 
 ### `CreatorFoundryBountyEscrow`
 `ReentrancyGuard`. One instance per chain, keyed by `keyFor(bountyId)`.

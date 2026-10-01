@@ -100,39 +100,45 @@ Each bounty gets one escrow, addressed by `keyFor(bountyId) = keccak256(bountyId
 ### 4.1 State machine
 
 ```
-        fund(key, amount, briefHash)
-                 │
-                 ▼
-          ┌─────────────┐   assignContributor(key, contributor, dWin, rWin)
-          │   FUNDED    │──────────────────────────────────────────────┐
-          │ (no clocks) │                                              │
-          └─────────────┘                                              ▼
-                 │                                            ┌──────────────┐
-                 │ refund() before assignment                 │  ASSIGNED    │
-                 │                                            │ deliveryDead │
-                 ▼                                            │ reviewDead(0)│          ┌─────────────┐                                     └──────┬───────┘
-          │  REFUNDED   │                                            │
-          └──────┬──────┘                          attestDelivery(key, deliveryHash)
-                 │                                                  │
-                 │ fund() again on the same key: the bounty          ▼
-                 │ reopens for a new contributor            ┌──────────────────┐
-                 └─────────────────────────────────────────▶│    ATTESTED      │
-                 ▲                                          │ deliveryDead      │
-                 │  refund() after deliveryDeadline,        │ reviewDeadline   │
-                 └── ONLY while not attested ───────────────│                  │
-                                                            └────┬────────┬────┘
-                                                    release()    │        │  autoRelease()
-                                                    (producer)   │        │  (ANYONE, after
-                                                                 ▼        ▼   reviewDeadline)
-                                                            ┌──────────────────┐
-                                                            │    RELEASED      │
-                                                            │ criticScore set │
-                                                            └──────────────────┘
+                          fund(key, amount, briefHash)
+                                   │
+                                   ▼
+       ┌───────────────┐    ┌──────────────┐
+       │ fund() again  │    │    FUNDED    │
+       │ (fresh round) │───▶│  no clocks   │
+       └───────▲───────┘    └──────┬───────┘
+               │                   │ assignContributor(key, contributor,
+               │                   │   deliveryWindow, reviewWindow)
+               │                   ▼
+               │            ┌─────────────┐  attestDelivery(key, deliveryHash)
+               │            │   ASSIGNED  │ ────────────────────────────┐
+               │            │ deliveryDead │                             ▼
+               │            │ (reviewDead  │                  ┌──────────────────┐
+               │            │  provisional)│                 │    ATTESTED      │
+               │            └──────┬──────┘                  │ review clock set │
+               │                   │ refund() after          │ at attestation;  │
+               │                   │ deliveryDeadline,       │ refund() dead    │
+               │                   │ only while NOT attested └────────┬─────────┘
+               │                   ▼                                  │
+               │            ┌─────────────┐              release()    │   autoRelease()
+               │            │  REFUNDED   │              (producer)   │   (ANYONE, after
+               └────────────│ refunded=1  │                           │    reviewDeadline)
+                            └─────────────┘                           ▼
+                                                             ┌──────────────────┐
+                                                             │    RELEASED      │
+                                                             │ criticScore set  │
+                                                             │   (terminal)     │
+                                                             └──────────────────┘
 ```
 
 `RELEASED` is terminal. `REFUNDED` is not: the escrow flags `refunded = true` and the same key can
 be funded again, so an expired bounty reopens for another contributor. Re-funding a *paid* escrow is
 rejected — otherwise one delivery could be paid twice.
+
+Note that `refund()` requires a named contributor: a producer who funds but never assigns cannot
+call `refund()` (the contract reverts with `ContributorUnset`). No third party can be harmed in
+that state — no contributor exists yet — and the producer recovers by assigning and letting the
+delivery window pass unattested.
 
 ### 4.2 Windows
 
@@ -140,7 +146,11 @@ The producer sets `deliveryWindow` and `reviewWindow` at assignment. Both are bo
 `MIN_WINDOW = 5 minutes`, `MAX_WINDOW = 90 days`, enforced by `InvalidWindow`.
 
 - `deliveryDeadline = now + deliveryWindow` — the contributor must `attestDelivery` before it.
-- `reviewDeadline` starts at **0** and is set to `now + reviewWindow` **when delivery is attested**.
+- `reviewDeadline` is provisional until attestation: `assignContributor` sets it to
+  `deliveryDeadline + reviewWindow`, and `attestDelivery` recomputes it as `now + reviewWindow`
+  from the moment the delivery actually arrived — so the producer's review clock always starts when
+  the work lands, never earlier. `autoRelease` additionally requires `attested == true`, so the
+  provisional value can never move money.
 
 The two clocks are what make silence unprofitable:
 
@@ -148,7 +158,7 @@ The two clocks are what make silence unprofitable:
 |---|---|---|
 | Producer stalls | ignores the delivery | after `reviewDeadline`, anyone calls `autoRelease()`; contributor is paid |
 | Contributor stalls | never delivers | after `deliveryDeadline`, producer calls `refund()`; reward returns |
-| Producer stalls *after* funding, before assigning | — | producer may `refund()`; no contributor is harmed |
+| Producer funds but never assigns | — | only the producer's own funds are at stake — no contributor exists yet; recovery is to assign and let the delivery window pass unattested, then `refund()` |
 | Either party tries to reverse | producer attempts refund after attestation | reverted by `AlreadyAttested` |
 
 ### 4.3 Why `release()` does not require attestation
@@ -282,7 +292,7 @@ There is no token, no emission and no staking. Value flows only where work did.
 | Threat | Mitigation |
 |---|---|
 | Producer never reviews | `autoRelease()` after `reviewDeadline` — permissionless, needs no cooperation |
-| Producer never assigns | `refund()` before assignment; the contributor was never exposed |
+| Producer funds but never assigns | no third party is exposed — there is no contributor until `assignContributor`; the producer recovers by assigning and letting the delivery window pass unattested, then `refund()` |
 | Producer attempts to claw back after delivery | `refund()` reverts once `attested` (`AlreadyAttested`) |
 | Contributor takes the reward without delivering | payment requires `release()` or `autoRelease()`, and `autoRelease()` requires attestation |
 | Contributor substitutes the artifact later | the delivery hash is attested on-chain; the artifact referenced by metadata can't be swapped silently |

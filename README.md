@@ -238,7 +238,7 @@ USDG split**.
 Anyone can re-verify the on-chain claims without a wallet or a key:
 
 ```bash
-npm run verify     # read-only, 26 checks against the live registries
+npm run verify     # read-only, 37 checks against the live registries
 ```
 
 ## Local development
