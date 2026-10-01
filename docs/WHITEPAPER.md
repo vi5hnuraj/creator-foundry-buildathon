@@ -294,6 +294,8 @@ There is no token, no emission and no staking. Value flows only where work did.
 | Reentrancy on value transfer | `ReentrancyGuard` on every value-moving path |
 | Fake off-chain "transaction" records | the application never fabricates a hash; unwritten actions are reported as simulated with a null hash |
 | Model verdict fabricated by the app | a score always carries its model identity, and an unreachable critic is reported as a fallback, never disguised |
+| Anyone mints an NFT claiming false authorship | `mint()` is deliberately permissionless — there is no platform key that could be stolen or abused, and every app mint is signed by the producer's own wallet. Impact is limited to metadata spam: an attacker can only mint to addresses they choose, at their own gas cost, and cannot touch escrowed funds or rewrite a committed split table |
+| Spoofed off-chain API calls (no session auth) | the API layer carries bookkeeping only — status flags, critic runs, records. Every value-moving action (`fund`, `commitSplit`, `release`, `mint`, `withdraw`) is a wallet-signed transaction from the connected account; the server holds no signing key (`FORGE_PRIVATE_KEY` unset ⇒ all server paths report `simulated` with a null hash). Spoofing can falsify a DB row, never a chain fact, which is why the auditable state lives on-chain |
 
 Residual trust is narrow and explicit: the producer chooses the brief's quality bar
 (mitigated by the critic's score being public), the contributor chooses what "delivery" means within
@@ -329,6 +331,9 @@ Stated plainly, because overstating them would undermine the rest:
    present as model output.
 6. **Contracts are unaudited.** This is buildathon software. It has not been reviewed by a third
    party and should not hold real value as-is.
+7. **Settlement assumes a standard ERC-20.** Transfers use the plain return-value check rather than
+   `SafeERC20`; USDG satisfies this, but a fee-on-transfer or no-return-value token would break
+   payout accounting and is not supported.
 
 ## 12. Roadmap
 
