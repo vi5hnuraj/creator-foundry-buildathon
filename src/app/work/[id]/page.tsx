@@ -463,8 +463,17 @@ function BoardInner({ workId }: { workId: string }) {
           /^(write|generate|give me|describe|tell me)\b/.test(lower) && (lower.includes("world") || lower.includes("dialogue") || lower.includes("character"))
         );
 
+      // A review/critique of an EXISTING plan is a conversation, not a new plan —
+      // route it to the director chat (which sees the real bounty board) instead
+      // of triggering another Decompose.
+      const isPlanReview =
+        (lower.includes("review") || lower.includes("critique") || lower.includes("sanity") ||
+          lower.includes("would you change") || lower.includes("any changes") || lower.includes("too high") || lower.includes("too low")) &&
+        (lower.includes("plan") || lower.includes("bount") || lower.includes("reward") || lower.includes("roadmap") || lower.includes("split"));
+
       // Priority 4 — Production Planning (only specific intent words)
       const isPlanning =
+        !isPlanReview &&
         !isCoaching && !isBackstory && !isCharacterAdd && (
           lower.includes("decompose") ||
           lower.includes("roadmap") ||
@@ -510,6 +519,9 @@ function BoardInner({ workId }: { workId: string }) {
         } else if (/fantasy|medieval|rpg|dungeon|knight|magic/.test(genreText)) {
           assumedGenre = "Medieval Fantasy RPG";
           assumedArt = "16-Bit Pixel Art with Glowing Gradients";
+        } else if (/\bshort\b|\bfilm\b|\bmovie\b|documentary/.test(genreText)) {
+          assumedGenre = "Analog Horror Short Film";
+          assumedArt = "Dark Digital Illustrative / Monochromatic";
         } else if (/horror|creepy|scary|ghost/.test(genreText)) {
           assumedGenre = "Atmospheric Horror Platformer";
           assumedArt = "Dark Digital Illustrative / Monochromatic";
@@ -643,7 +655,7 @@ Does this look correct? Please click "Generate Production Plan" below to proceed
 
       } else if (isCharacterAdd && memory) {
         // Derive the character name from the request, persist into Creative Memory
-        const nameMatch = prompt.match(/(?:called|named|name[d]?)\s+([A-Z][\w'’-]*(?:\s+[A-Z][\w'’-]*)?)/);
+        const nameMatch = prompt.match(/(?:called|named|name[d]?)\s+([A-Z][\w.'’-]*(?:\s+[A-Z][\w.'’-]*){0,2})/);
         const charName = nameMatch ? nameMatch[1] : `New Character ${memory.characters.length + 1}`;
         const lowerDesc = prompt.toLowerCase();
         const roleGuess = /detective|inspector|investigator|sleuth/.test(lowerDesc)
@@ -1833,6 +1845,14 @@ const WINDOW_OPTIONS = [
   { label: "30 days", value: 2592000 },
 ];
 
+/** One row of the live confirmation checklist inside the escrow lock modal. */
+type EscrowTxStep = {
+  key: "approve" | "fund" | "assign";
+  label: string;
+  status: "waiting" | "active" | "done" | "skipped";
+  hash?: string;
+};
+
 /**
  * Lock a bounty reward in escrow — the step that turns a promise into a
  * guarantee. Signs up to three transactions: USDG approve, fund, and (when the
@@ -1854,6 +1874,8 @@ function EscrowLockModal({
   const publicClient = usePublicClient();
   const [busy, setBusy] = useState(false);
   const [step, setStep] = useState<string | null>(null);
+  const [steps, setSteps] = useState<EscrowTxStep[]>([]);
+  const [finished, setFinished] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [deliveryWindow, setDeliveryWindow] = useState(DEFAULT_DELIVERY_WINDOW_SECONDS);
   const [reviewWindow, setReviewWindow] = useState(DEFAULT_REVIEW_WINDOW_SECONDS);
@@ -1870,6 +1892,27 @@ function EscrowLockModal({
     }
     setBusy(true);
     setError(null);
+    setFinished(false);
+    const plan: EscrowTxStep[] = [
+      {
+        key: "approve",
+        label: `1 · Approve escrow to spend ${reward} USDG`,
+        status: "waiting",
+      },
+      {
+        key: "fund",
+        label: `2 · Lock ${reward} USDG in escrow`,
+        status: "waiting",
+      },
+    ];
+    if (bounty.claimed_by) {
+      plan.push({
+        key: "assign",
+        label: `3 · Start the SLA clock — assign ${shortHash(bounty.claimed_by, 6)}`,
+        status: "waiting",
+      });
+    }
+    setSteps(plan);
     try {
       setStep("Hashing the brief…");
       const attest = await apiGet<{ briefHash: string }>(`/api/bounties/${bounty.id}/attest`);
@@ -1877,12 +1920,29 @@ function EscrowLockModal({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const reader = ((args: any) => publicClient.readContract(args)) as EscrowReader;
       setStep(`Locking ${reward} USDG in escrow…`);
-      const { fundTx } = await fundBountyEscrow(writeContractAsync, reader, {
+      const { approveTx, fundTx } = await fundBountyEscrow(writeContractAsync, reader, {
         bountyId: bounty.id,
         amount: reward,
         briefHash: attest.briefHash as `0x${string}`,
         owner: walletAddr,
+        onStep: (s) =>
+          setSteps((prev) =>
+            prev.map((x) => (x.key === s ? { ...x, status: "active" as const } : x)),
+          ),
       });
+      setSteps((prev) =>
+        prev.map((x) =>
+          x.key === "approve"
+            ? {
+                ...x,
+                status: approveTx ? ("done" as const) : ("skipped" as const),
+                hash: approveTx,
+              }
+            : x.key === "fund"
+              ? { ...x, status: "done" as const, hash: fundTx }
+              : x,
+        ),
+      );
 
       await apiPost(`/api/bounties/${bounty.id}/escrow`, {
         wallet: walletAddr,
@@ -1897,6 +1957,9 @@ function EscrowLockModal({
       // rather than needing a second visit.
       if (bounty.claimed_by) {
         setStep("Starting the SLA clock…");
+        setSteps((prev) =>
+          prev.map((x) => (x.key === "assign" ? { ...x, status: "active" as const } : x)),
+        );
         const assignTx = await assignBountyContributor(writeContractAsync, {
           bountyId: bounty.id,
           contributor: bounty.claimed_by,
@@ -1908,9 +1971,19 @@ function EscrowLockModal({
           action: "assign",
           txHash: assignTx,
         });
+        setSteps((prev) =>
+          prev.map((x) =>
+            x.key === "assign" ? { ...x, status: "done" as const, hash: assignTx } : x,
+          ),
+        );
       }
 
-      onDone();
+      // Keep the modal open so the full confirmation trail stays on screen —
+      // MetaMask steals focus, and the user should come back to a visible
+      // record of exactly what they signed.
+      setStep(null);
+      setBusy(false);
+      setFinished(true);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not lock the reward");
       setBusy(false);
@@ -1982,17 +2055,64 @@ function EscrowLockModal({
             <Spinner /> {step}
           </p>
         )}
+
+        {steps.length > 0 && (
+          <div className="rounded-lg border border-[color:var(--border)] bg-surface-2/50 px-3 py-2.5 space-y-2">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-t4">
+              Wallet confirmations — {steps.filter((s) => s.status === "done" || s.status === "skipped").length}/{steps.length} complete
+            </p>
+            {steps.map((s) => (
+              <div key={s.key} className="flex items-start gap-2">
+                <span className="mt-[3px] w-3.5 flex justify-center">
+                  {s.status === "done" ? (
+                    <CheckCircle className="w-3.5 h-3.5 text-success" />
+                  ) : s.status === "active" ? (
+                    <Spinner />
+                  ) : (
+                    <span className="inline-block w-2.5 h-2.5 mt-0.5 rounded-full border border-[color:var(--border)]" />
+                  )}
+                </span>
+                <div className="min-w-0">
+                  <p className={`text-[12px] ${s.status === "waiting" ? "text-t4" : "text-t2 font-medium"}`}>
+                    {s.label}
+                    {s.status === "skipped" && (
+                      <span className="text-t4 font-normal"> — not needed, allowance already approved</span>
+                    )}
+                  </p>
+                  {s.status === "active" && (
+                    <p className="text-[10px] text-t4">
+                      MetaMask popup is waiting — confirm there; this page updates automatically.
+                    </p>
+                  )}
+                  {s.hash && <TxLink hash={s.hash} />}
+                </div>
+              </div>
+            ))}
+            {finished && (
+              <p className="text-[11px] font-semibold text-success">
+                All confirmations complete — escrow armed. Click Done to close.
+              </p>
+            )}
+          </div>
+        )}
         {error && <p className="text-[13px] text-danger">{error}</p>}
 
         <div className="flex justify-end gap-2">
           <button type="button" className="btn-ghost" onClick={onClose} disabled={busy}>
             Cancel
           </button>
-          <button type="button" className="btn-primary" onClick={lockReward} disabled={busy}>
+          <button
+            type="button"
+            className="btn-primary"
+            onClick={finished ? onDone : lockReward}
+            disabled={busy}
+          >
             {busy ? (
               <>
                 <Spinner /> Confirming…
               </>
+            ) : finished ? (
+              "Done"
             ) : (
               `🔒 Lock ${reward} USDG`
             )}
@@ -2199,6 +2319,7 @@ function BountyRow({
                       <span className="rf-data text-[11px] text-t2">
                         {formatUsdg(escrow!.amount)} USDG locked in escrow
                       </span>
+                      {b.escrow_tx && <TxLink hash={b.escrow_tx}>escrow ↗</TxLink>}
                       {assigned ? (
                         escrow!.attested ? (
                           <span

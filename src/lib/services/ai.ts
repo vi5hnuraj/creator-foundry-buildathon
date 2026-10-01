@@ -916,10 +916,28 @@ Attribution: 100% verified royalty split mapping showing Alice, Bob, and contrib
     const title = work?.title || "the project";
     const desc = work?.description || "";
 
+    // Pull the REAL bounty board so the director can critique the actual plan
+    // (rewards, royalty shares, roles) instead of inventing one.
+    let boardSummary = "The bounty board is currently empty — nothing has been planned yet.";
+    if (resolved) {
+      const { data: bounties } = await supabase
+        .from("bounties")
+        .select("title, role, reward_eth, revenue_percent, status")
+        .eq("work_id", resolved.id);
+      if (bounties && bounties.length > 0) {
+        boardSummary = (bounties as Array<{ title: string; role: string; reward_eth: number; revenue_percent: number | null; status: string }>)
+          .map((b) => `- "${b.title}" · role: ${b.role} · reward: ${b.reward_eth} USDG · royalty share: ${b.revenue_percent ?? 0}% · status: ${b.status}`)
+          .join("\n");
+      }
+    }
+
     const sysInstruction = `You are the Foundry Intelligence AI Production Director for "${title}".
 Project brief: "${desc}"
 You coordinate the creative brief, visual guide, music elements, storyline, character memory, and overall workspace task alignment.
-Ground every answer in THIS project's premise, palette (${(memory.brandColors || []).slice(0, 2).map((c) => c.name).join(" / ")}), and tone. Be concise and actionable.`;
+Ground every answer in THIS project's premise, palette (${(memory.brandColors || []).slice(0, 2).map((c) => c.name).join(" / ")}), and tone.
+The CURRENT bounty board (source of truth — never invent bounties that are not on this list):
+${boardSummary}
+When the user asks you to review, critique, or sanity-check the plan/rewards/royalties, analyze THESE actual bounties — reward-vs-scope balance, royalty-share fairness, role coverage against the brief — and suggest concrete edits. Be concise and actionable.`;
 
     const userPrompt = `Project Art Style: ${memory.artStyle}
 Dialogue Tone: ${memory.dialogueTone}

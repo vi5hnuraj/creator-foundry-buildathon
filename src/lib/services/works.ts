@@ -56,8 +56,13 @@ export async function openBounty(opts: {
   deliverableSpecs?: string;
   referencePath?: string;
 }): Promise<ServiceResult<Bounty>> {
+  // Canonicalize slug → UUID: the client passes the URL param (which is the
+  // pretty slug since URLs went human-readable), but every bounty row must
+  // key on the work's UUID or the board will never find them.
+  const resolved = await resolveWorkParam(opts.workId);
+  const workId = resolved?.id ?? opts.workId;
   const insert: Record<string, unknown> = {
-    work_id: opts.workId,
+    work_id: workId,
     title: opts.title,
     role: opts.role,
     reward_eth: opts.rewardEth,

@@ -1,28 +1,14 @@
 #!/usr/bin/env node
 /**
- * REAL ESCROW LOOP — drives the producer's side of a bounty end to end on-chain.
+ * Escrow Demo
+ * Executes the complete producer-side bounty flow on-chain.
  *
- * Usage:
- *   node scripts/demo-loop.mjs <bountyId> [--score 78] [--app-url http://localhost:3000]
- *                              [--delivery-window 604800] [--review-window 259200]
+ * Flow:
+ * Approve → Fund Escrow → Register Contributor
+ * → Mint Proof NFT → Release Payment
  *
- * What it signs, in order (all with DEPLOYER_PRIVATE_KEY from .env.local):
- *   1. USDG approve  → the escrow, for the bounty amount (skipped if already sufficient)
- *   2. escrow.fund   → locks the reward + the brief hash
- *   3. escrow.assignContributor → names the contributor, starts both SLA clocks
- *   4. NFT mint      → proof-of-authorship to the contributor (reads the real token id
- *                      out of the AssetMinted event)
- *   5. escrow.release → pays the contributor, stamping the critic score
- *
- * Then it records every hash through the app's API so the UI shows the same
- * truth the chain does. Prints an explorer link per transaction.
- *
- * PREREQUISITES the script refuses to guess:
- *   - the bounty must be 'delivered' with claimed_by set
- *   - `bounty.brief_hash` and `bounty.delivery_hash` must already exist
- *     (call GET /api/bounties/:id/attest once — that computes and caches them)
- *
- * The private key is read from .env.local and never printed.
+ * Usage: node scripts/demo-loop.mjs <bountyId>
+ * (details: docs/DEPLOYMENT.md)
  */
 import { readFileSync, existsSync } from "node:fs";
 import { resolve, dirname } from "node:path";

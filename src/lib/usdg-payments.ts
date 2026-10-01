@@ -254,7 +254,14 @@ export async function approveUsdg(
 export async function fundBountyEscrow(
   writeContractAsync: UsdgWriter,
   readContract: EscrowReader,
-  opts: { bountyId: string; amount: number; briefHash: `0x${string}`; owner: string }
+  opts: {
+    bountyId: string;
+    amount: number;
+    briefHash: `0x${string}`;
+    owner: string;
+    /** Live progress for UI checklists: fires right before each wallet prompt. */
+    onStep?: (step: "approve" | "fund") => void;
+  }
 ): Promise<{ approveTx?: `0x${string}`; fundTx: `0x${string}` }> {
   const spender = escrowAddress();
   const needed = parseUsdg(opts.amount);
@@ -273,9 +280,11 @@ export async function fundBountyEscrow(
   }
 
   if (existing < needed) {
+    opts.onStep?.("approve");
     approveTx = await approveUsdg(writeContractAsync, { spender, amount: opts.amount });
   }
 
+  opts.onStep?.("fund");
   const fundTx = await writeContractAsync({
     address: spender,
     abi: BOUNTY_ESCROW_ABI,
