@@ -1,0 +1,33 @@
+{
+  "$comment": "PER-CHAIN DEPLOYMENT REGISTRY — written by scripts/deploy.mjs, read by src/lib/chains.ts. Contract addresses are chain-specific, so they live here instead of in a single set of NEXT_PUBLIC_* env vars. Switch chains by setting NEXT_PUBLIC_CHAIN; the app picks the matching entry.",
+  "chainOrder": [
+    "robinhood-testnet",
+    "arbitrum-sepolia"
+  ],
+  "chains": {
+    "robinhood-testnet": {
+      "label": "Robinhood Chain Testnet",
+      "chainId": 46630,
+      "rpc": "https://rpc.testnet.chain.robinhood.com",
+      "explorer": "https://explorer.testnet.chain.robinhood.com",
+      "usdg": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+      "nft": "0xb176b9ea780c534c47c15a9651f7af1b80302b10",
+      "splits": "0x66ffff1d5bd5cd41e4cd9695875f1e8e96bdd845",
+      "escrow": "0x6390674fe1ac130c145299396a5441510d052062",
+      "primary": true,
+      "note": "Primary demo chain: full loop proven — a bounty locked, scored, paid, and a royalty sale settled in real Paxos USDG."
+    },
+    "arbitrum-sepolia": {
+      "label": "Arbitrum Sepolia",
+      "chainId": 421614,
+      "rpc": "https://sepolia-rollup.arbitrum.io/rpc",
+      "explorer": "https://sepolia.arbiscan.io",
+      "usdg": "0xFFC95faa3d63Cde504a05B567C600B78C0b41892",
+      "nft": "0xd63401c8b86c5baa85e4af0e141c4bb55cf4f5ca",
+      "splits": "0x381f563514b264e7142bd3ea090e34350c0e6693",
+      "escrow": "0x0a002725a40c46fcdbc7cca488f6469b8203ce96",
+      "primary": false,
+      "note": "Buildathon's home chain: all three contracts deployed (AssetNFT, Splits, BountyEscrow). Wallet funding not yet exercised — no testnet USDG held on this chain."
+    }
+  }
+}
