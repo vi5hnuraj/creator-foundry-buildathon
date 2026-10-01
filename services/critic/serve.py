@@ -17,6 +17,14 @@ import io
 import os
 from pathlib import Path
 
+# On Vercel the build/runtime filesystem is read-only outside /tmp — point the
+# CLIP weight cache (downloaded on first score request) at /tmp so open_clip can
+# fetch ViT-B-32 laion2b weights on a cold start.
+if os.environ.get("VERCEL"):
+    os.environ.setdefault("TORCH_HOME", "/tmp/torch")
+    os.environ.setdefault("HF_HOME", "/tmp/hf")
+    os.environ.setdefault("XDG_CACHE_HOME", "/tmp/xdg")
+
 import requests
 from typing import List, Optional
 
@@ -56,7 +64,7 @@ def _load(img_bytes: bytes) -> Image.Image:
 def _fetch(url: str) -> Image.Image:
     if url.startswith("/"):  # app-relative (e.g. /api/files/xxx)
         base = os.environ.get("APP_ORIGIN", "http://localhost:3000")
-        url = base + url
+        url = base.rstrip("/") + url
     r = requests.get(url, timeout=30)
     r.raise_for_status()
     return _load(r.content)

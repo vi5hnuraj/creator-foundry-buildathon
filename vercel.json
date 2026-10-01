@@ -1,0 +1,37 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "services": {
+    "app": {
+      "root": ".",
+      "framework": "nextjs",
+      "bindings": [
+        {
+          "type": "service",
+          "service": "critic",
+          "format": "url",
+          "env": "CRITIC_SERVICE_URL"
+        }
+      ]
+    },
+    "critic": {
+      "root": "services/critic/",
+      "framework": "fastapi",
+      "entrypoint": "serve:app",
+      "installCommand": "pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cpu",
+      "bindings": [
+        {
+          "type": "service",
+          "service": "app",
+          "format": "url",
+          "env": "APP_ORIGIN"
+        }
+      ]
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": { "service": "app" }
+    }
+  ]
+}
